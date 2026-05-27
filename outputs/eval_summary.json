@@ -1,0 +1,11 @@
+{
+  "source_accuracy": 100.0,
+  "answer_accuracy": 100.0,
+  "grounding_rate": 87.5,
+  "hallucination_rate": 12.5,
+  "n_questions": 8,
+  "model": "llama-3.3-70b-versatile",
+  "embedding_model": "all-MiniLM-L6-v2",
+  "top_k": 5,
+  "chunk_size": 500
+}

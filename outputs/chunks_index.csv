@@ -1,0 +1,42 @@
+doc_id,company,ticker,quarter,year,chunk_text
+AAPL_Q4_2024,Apple,AAPL,Q4,2024,"Apple Inc. Q4 2024 Earnings Call Transcript
+
+CEO Tim Cook: Good afternoon everyone. We're pleased to..."
+AAPL_Q4_2024,Apple,AAPL,Q4,2024,"On AI, we're incredibly excited about Apple Intelligence. We believe we're at an inflection
+point wh..."
+AAPL_Q4_2024,Apple,AAPL,Q4,2024,"CFO Luca Maestri: Gross margin was 46.2%, up 100 basis points year over year. Operating
+cash flow wa..."
+AAPL_Q4_2024,Apple,AAPL,Q4,2024,"Analyst: Can you discuss the AI monetization strategy?
+Tim Cook: We see Apple Intelligence as a way ..."
+MSFT_Q1_2025,Microsoft,MSFT,Q1,2025,"Microsoft Corporation Q1 2025 Earnings Call Transcript
+
+CEO Satya Nadella: Thank you. We had an outs..."
+MSFT_Q1_2025,Microsoft,MSFT,Q1,2025,"Azure and other cloud services grew 33% in constant currency. AI services are becoming
+a meaningful ..."
+MSFT_Q1_2025,Microsoft,MSFT,Q1,2025,"CFO Amy Hood: Operating income was $30.6 billion, up 14%. We generated $34.2 billion
+in operating ca..."
+MSFT_Q1_2025,Microsoft,MSFT,Q1,2025,"Analyst: How should we think about AI contribution to Azure growth?
+Satya Nadella: AI is now contrib..."
+GOOGL_Q3_2024,Google,GOOGL,Q3,2024,"Alphabet Inc. Q3 2024 Earnings Call Transcript
+
+CEO Sundar Pichai: We had a very strong quarter. Tot..."
+GOOGL_Q3_2024,Google,GOOGL,Q3,2024,"On AI, Gemini is being used across all our products. Google Search now incorporates
+AI Overviews rea..."
+GOOGL_Q3_2024,Google,GOOGL,Q3,2024,"Analyst: Can you discuss Search monetization with AI Overviews?
+Sundar Pichai: We're pleased with ho..."
+NVDA_Q2_2025,NVIDIA,NVDA,Q2,2025,"NVIDIA Corporation Q2 FY2025 Earnings Call Transcript
+
+CEO Jensen Huang: Revenue was a record $30.0 ..."
+NVDA_Q2_2025,NVIDIA,NVDA,Q2,2025,"We are at the beginning of a new industrial revolution. Every country, every company
+needs sovereign..."
+NVDA_Q2_2025,NVIDIA,NVDA,Q2,2025,"Analyst: How should we think about Blackwell supply constraints?
+Jensen Huang: Blackwell demand is e..."
+META_Q3_2024,Meta,META,Q3,2024,"Meta Platforms Q3 2024 Earnings Call Transcript
+
+CEO Mark Zuckerberg: Q3 was a great quarter. Revenu..."
+META_Q3_2024,Meta,META,Q3,2024,"On AI, Meta AI now has over 500 million monthly active users across our apps.
+Llama models have been..."
+META_Q3_2024,Meta,META,Q3,2024,"CFO Susan Li: Operating income was $17.3 billion, representing a 43% margin.
+Capital expenditures we..."
+META_Q3_2024,Meta,META,Q3,2024,"Analyst: Can you discuss the ROI on AI infrastructure spending?
+Mark Zuckerberg: We're seeing AI del..."
