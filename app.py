@@ -95,38 +95,14 @@ def load_rag():
 
 @st.cache_data
 def load_data():
-    # Build DB from config data if it doesn't exist (e.g. on Streamlit Cloud)
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    if not os.path.exists(DB_PATH):
-        conn2 = sqlite3.connect(DB_PATH)
-        cursor = conn2.cursor()
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS transcripts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            doc_id TEXT UNIQUE, company TEXT, ticker TEXT,
-            quarter TEXT, year INTEGER, revenue_bn REAL,
-            yoy_growth REAL, key_topics TEXT, n_chunks INTEGER
-        )""")
-        metadata_map = {
-            "AAPL_Q4_2024":  ("Apple",     "AAPL",  "Q4", 2024, 94.9,  6.0,   "iPhone,Services,Apple Intelligence,AI", 12),
-            "MSFT_Q1_2025":  ("Microsoft", "MSFT",  "Q1", 2025, 65.6,  16.0,  "Azure,AI,Copilot,Cloud",                10),
-            "GOOGL_Q3_2024": ("Google",    "GOOGL", "Q3", 2024, 88.3,  15.0,  "Search,YouTube,Cloud,Gemini,AI",        11),
-            "NVDA_Q2_2025":  ("NVIDIA",    "NVDA",  "Q2", 2025, 30.0,  122.0, "Data Center,Blackwell,AI,GPU",          9),
-            "META_Q3_2024":  ("Meta",      "META",  "Q3", 2024, 40.6,  19.0,  "Advertising,AI,Llama,VR",              10),
-        }
-        for doc_id, vals in metadata_map.items():
-            cursor.execute(
-                "INSERT OR REPLACE INTO transcripts "
-                "(doc_id,company,ticker,quarter,year,revenue_bn,yoy_growth,key_topics,n_chunks) "
-                "VALUES (?,?,?,?,?,?,?,?,?)",
-                (doc_id,) + vals
-            )
-        conn2.commit()
-        conn2.close()
-
-    conn = sqlite3.connect(DB_PATH)
-    df   = pd.read_sql("SELECT * FROM transcripts", conn)
-    conn.close()
+    # Use hardcoded data — no SQLite needed for deployment
+    df = pd.DataFrame([
+        {"id":1,"doc_id":"AAPL_Q4_2024", "company":"Apple",     "ticker":"AAPL",  "quarter":"Q4","year":2024,"revenue_bn":94.9, "yoy_growth":6.0,   "key_topics":"iPhone,Services,AI",       "n_chunks":12},
+        {"id":2,"doc_id":"MSFT_Q1_2025", "company":"Microsoft", "ticker":"MSFT",  "quarter":"Q1","year":2025,"revenue_bn":65.6, "yoy_growth":16.0,  "key_topics":"Azure,AI,Copilot,Cloud",   "n_chunks":10},
+        {"id":3,"doc_id":"GOOGL_Q3_2024","company":"Google",    "ticker":"GOOGL", "quarter":"Q3","year":2024,"revenue_bn":88.3, "yoy_growth":15.0,  "key_topics":"Search,YouTube,Gemini,AI", "n_chunks":11},
+        {"id":4,"doc_id":"NVDA_Q2_2025", "company":"NVIDIA",    "ticker":"NVDA",  "quarter":"Q2","year":2025,"revenue_bn":30.0, "yoy_growth":122.0, "key_topics":"Data Center,Blackwell,AI", "n_chunks":9},
+        {"id":5,"doc_id":"META_Q3_2024", "company":"Meta",      "ticker":"META",  "quarter":"Q3","year":2024,"revenue_bn":40.6, "yoy_growth":19.0,  "key_topics":"Advertising,AI,Llama",     "n_chunks":10},
+    ])
     eval_summary = {}
     if os.path.exists(f"{OUTPUT_DIR}/eval_summary.json"):
         with open(f"{OUTPUT_DIR}/eval_summary.json") as f:
@@ -135,10 +111,6 @@ def load_data():
     if os.path.exists(f"{OUTPUT_DIR}/eval_results.csv"):
         eval_results = pd.read_csv(f"{OUTPUT_DIR}/eval_results.csv")
     return df, eval_summary, eval_results
-
-with st.spinner("🚀 Loading RAG system..."):
-    vectorstore, llm = load_rag()
-    transcripts_df, eval_summary, eval_results = load_data()
 
 # ── RAG function ──────────────────────────────────────────────
 def ask_rag(question, company_filter=None, chat_history=None):
