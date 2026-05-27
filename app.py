@@ -80,11 +80,38 @@ def load_rag():
         model_kwargs={"device": "cpu"},
         encode_kwargs={"normalize_embeddings": True}
     )
-    vectorstore = Chroma(
-        persist_directory=CHROMA_DIR,
-        embedding_function=embedding_model,
-        collection_name="earnings_calls"
-    )
+    # Build vector store from scratch if it doesn't exist
+    if not os.path.exists(CHROMA_DIR) or len(os.listdir(CHROMA_DIR)) == 0:
+        os.makedirs(CHROMA_DIR, exist_ok=True)
+        from langchain_text_splitters import RecursiveCharacterTextSplitter
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
+        )
+        all_chunks, all_metadata = [], []
+        meta_map = {
+            "AAPL_Q4_2024":  {"company":"Apple",     "ticker":"AAPL",  "quarter":"Q4","year":"2024"},
+            "MSFT_Q1_2025":  {"company":"Microsoft", "ticker":"MSFT",  "quarter":"Q1","year":"2025"},
+            "GOOGL_Q3_2024": {"company":"Google",    "ticker":"GOOGL", "quarter":"Q3","year":"2024"},
+            "NVDA_Q2_2025":  {"company":"NVIDIA",    "ticker":"NVDA",  "quarter":"Q2","year":"2025"},
+            "META_Q3_2024":  {"company":"Meta",      "ticker":"META",  "quarter":"Q3","year":"2024"},
+        }
+        for doc_id, text in SAMPLE_TRANSCRIPTS.items():
+            chunks = splitter.split_text(text.strip())
+            for i, chunk in enumerate(chunks):
+                all_chunks.append(chunk)
+                m = meta_map.get(doc_id, {})
+                all_metadata.append({**m, "doc_id": doc_id, "chunk_id": f"{doc_id}_{i}"})
+        vectorstore = Chroma.from_texts(
+            texts=all_chunks, embedding=embedding_model,
+            metadatas=all_metadata, persist_directory=CHROMA_DIR,
+            collection_name="earnings_calls"
+        )
+    else:
+        vectorstore = Chroma(
+            persist_directory=CHROMA_DIR,
+            embedding_function=embedding_model,
+            collection_name="earnings_calls"
+        )
     llm = ChatGroq(
         groq_api_key=GROQ_API_KEY,
         model_name=LLM_MODEL,
