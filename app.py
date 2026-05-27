@@ -95,6 +95,35 @@ def load_rag():
 
 @st.cache_data
 def load_data():
+    # Build DB from config data if it doesn't exist (e.g. on Streamlit Cloud)
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    if not os.path.exists(DB_PATH):
+        conn2 = sqlite3.connect(DB_PATH)
+        cursor = conn2.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS transcripts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            doc_id TEXT UNIQUE, company TEXT, ticker TEXT,
+            quarter TEXT, year INTEGER, revenue_bn REAL,
+            yoy_growth REAL, key_topics TEXT, n_chunks INTEGER
+        )""")
+        metadata_map = {
+            "AAPL_Q4_2024":  ("Apple",     "AAPL",  "Q4", 2024, 94.9,  6.0,   "iPhone,Services,Apple Intelligence,AI", 12),
+            "MSFT_Q1_2025":  ("Microsoft", "MSFT",  "Q1", 2025, 65.6,  16.0,  "Azure,AI,Copilot,Cloud",                10),
+            "GOOGL_Q3_2024": ("Google",    "GOOGL", "Q3", 2024, 88.3,  15.0,  "Search,YouTube,Cloud,Gemini,AI",        11),
+            "NVDA_Q2_2025":  ("NVIDIA",    "NVDA",  "Q2", 2025, 30.0,  122.0, "Data Center,Blackwell,AI,GPU",          9),
+            "META_Q3_2024":  ("Meta",      "META",  "Q3", 2024, 40.6,  19.0,  "Advertising,AI,Llama,VR",              10),
+        }
+        for doc_id, vals in metadata_map.items():
+            cursor.execute(
+                "INSERT OR REPLACE INTO transcripts "
+                "(doc_id,company,ticker,quarter,year,revenue_bn,yoy_growth,key_topics,n_chunks) "
+                "VALUES (?,?,?,?,?,?,?,?,?)",
+                (doc_id,) + vals
+            )
+        conn2.commit()
+        conn2.close()
+
     conn = sqlite3.connect(DB_PATH)
     df   = pd.read_sql("SELECT * FROM transcripts", conn)
     conn.close()
@@ -518,6 +547,8 @@ with tab4:
 # ─────────────────────────────────────────────────────────────
 with tab5:
     st.markdown('<div class="section-header">SQL Metadata Explorer</div>', unsafe_allow_html=True)
+    if not os.path.exists(DB_PATH):
+        load_data()
     conn_sql = sqlite3.connect(DB_PATH)
 
     queries = {
